@@ -65,7 +65,7 @@ function createArgsMapForTool(
   return next;
 }
 
-export default function McpServerShowcaseForm() {
+export default function McpServerShowcasePrompts() {
   const [tools, setTools] = useState<ToolOption[]>([]);
   const [selectedToolName, setSelectedToolName] = useState("");
   const [message, setMessage] = useState("");

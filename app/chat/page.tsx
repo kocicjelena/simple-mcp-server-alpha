@@ -1,5 +1,6 @@
 import Link from "next/link";
 import McpServerShowcaseForm from "@/app/components/forms/McpServerShowcaseForm";
+import ShowcaseFun from "../components/forms/ShowcaseFun";
 
 export default function McpServerPage() {
   return (
@@ -10,7 +11,7 @@ export default function McpServerPage() {
       <p style={{ color: "#94a3b8", marginBottom: "1.5rem" }}>
         A local App Router MCP endpoint with small built-in tools.
       </p>
-      <McpServerShowcaseForm />
+      <ShowcaseFun />
       <p style={{ marginTop: "1.25rem" }}>
         <Link href="/" style={{ color: "#a78bfa" }}>
           Back
