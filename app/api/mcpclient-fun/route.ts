@@ -26,10 +26,11 @@ export async function GET(req: Request) {
 
   try {
     const origin = new URL(req.url).origin;
+    console.log("MCP Client connecting to origin:", origin);
     const connection = await mcpClientNew(origin);
     client = connection.client;
     transport = connection.transport;
-//console.log("MCP Client connected to:", origin,client,transport);
+console.log("MCP Client connected to:", origin,client.listPrompts(),transport);
     const listed = await client.listTools();
 
     return NextResponse.json({
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as ToolCallPayload;
 
-    if (!body.toolName) {
+    if (!body.message) {
       return NextResponse.json({ error: "toolName is required" }, { status: 400 });
     }
 
@@ -65,21 +66,34 @@ export async function POST(req: Request) {
     const connection = await mcpClientNew(origin);
     client = connection.client;
     transport = connection.transport;
-
-    const result = await client.callTool({
-      name: body.toolName,
-      arguments: body.args ?? {},
+const result = client.setRequestHandler('sampling/createMessage', async request => {
+        const lastMessage = request.params.messages.at(-1);
+        console.log('Sampling request:', lastMessage);
+   
+        // In production, send messages to your LLM here
+        return {
+            model: `${"qwen3.5:0.8b"}`,
+            role: 'assistant' as const,
+            content: {
+                type: `${request.params.messages.entries()}` as const,
+                text: `${request.params.messages.entries()}`
+            },
+            task: 'response' as const,
+            metadata: {
+                timestamp: Date.now()
+            }
+        };
     });
+    //const result = await client.connect();
+    // .callTool({
+    //   name: body.toolName,
+    //   arguments: body.args ?? {},
+    // });
 
-    const toolText = resultToText(result);
+    //const toolText = resultToText(result);
 
     return NextResponse.json({
-      answer: body.message
-        ? `Message: ${body.message}\n\nTool: ${body.toolName}\n\n${toolText}`
-        : `Tool: ${body.toolName}\n\n${toolText}`,
-      toolName: body.toolName,
-      toolResult: result,
-      toolText,
+      result
     });
   } catch (error) {
     return NextResponse.json(
