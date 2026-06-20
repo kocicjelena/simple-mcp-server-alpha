@@ -1,0 +1,9 @@
+# Place your GGUF model files here
+# Supported formats: .gguf, .bin, .pt, .pth, .safetensors
+# 
+# Example:
+# - llama-7b.gguf
+# - mistral-model.gguf
+# - model.bin
+#
+# Models will be automatically discovered and available via /api/mcpserver/models

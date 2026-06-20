@@ -2,8 +2,8 @@
 import { NextResponse } from "next/server";
 import { mcpClientNew } from "@/lib/mcp/mcpclientnew";
 
-type ToolCallPayload = {
-  toolName?: string;
+type PromptCallPayload = {
+  promptName?: string;
   args?: Record<string, unknown>;
   message?: string;
 };
@@ -20,6 +20,10 @@ function resultToText(result: any): string {
   return textBlocks.length > 0 ? textBlocks.join("\n") : JSON.stringify(result, null, 2);
 }
 
+/**
+ * GET /api/mcpclient-prompt
+ * Lists all available prompts from the MCP server
+ */
 export async function GET(req: Request) {
   let client: Awaited<ReturnType<typeof mcpClientNew>>["client"] | null = null;
   let transport: Awaited<ReturnType<typeof mcpClientNew>>["transport"] | null = null;
@@ -29,19 +33,20 @@ export async function GET(req: Request) {
     const connection = await mcpClientNew(origin);
     client = connection.client;
     transport = connection.transport;
-//console.log("MCP Client connected to:", origin,client,transport);
-    const listed = await client.listTools();
+
+    const listed = await client.listPrompts();
 
     return NextResponse.json({
-      tools: listed.tools.map((tool) => ({
-        name: tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema,
+      success: true,
+      prompts: listed.prompts.map((prompt) => ({
+        name: prompt.name,
+        description: prompt.description,
+        arguments: prompt.arguments,
       })),
     });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : String(error) },
+      { success: false, error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   } finally {
@@ -50,15 +55,22 @@ export async function GET(req: Request) {
   }
 }
 
+/**
+ * POST /api/mcpclient-prompt
+ * Invokes a prompt with provided arguments
+ */
 export async function POST(req: Request) {
   let client: Awaited<ReturnType<typeof mcpClientNew>>["client"] | null = null;
   let transport: Awaited<ReturnType<typeof mcpClientNew>>["transport"] | null = null;
 
   try {
-    const body = (await req.json()) as ToolCallPayload;
+    const body = (await req.json()) as PromptCallPayload;
 
-    if (!body.toolName) {
-      return NextResponse.json({ error: "toolName is required" }, { status: 400 });
+    if (!body.promptName) {
+      return NextResponse.json(
+        { success: false, error: "promptName is required" },
+        { status: 400 }
+      );
     }
 
     const origin = new URL(req.url).origin;
@@ -66,24 +78,26 @@ export async function POST(req: Request) {
     client = connection.client;
     transport = connection.transport;
 
-    const result = await client.callTool({
-      name: body.toolName,
+    // Get the prompt and call it with arguments
+    const result = await client.getPrompt({
+      name: body.promptName,
       arguments: body.args ?? {},
     });
 
-    const toolText = resultToText(result);
+    const promptText = resultToText(result);
 
     return NextResponse.json({
+      success: true,
       answer: body.message
-        ? `Message: ${body.message}\n\nTool: ${body.toolName}\n\n${toolText}`
-        : `Tool: ${body.toolName}\n\n${toolText}`,
-      toolName: body.toolName,
-      toolResult: result,
-      toolText,
+        ? `Message: ${body.message}\n\nPrompt: ${body.promptName}\n\n${promptText}`
+        : `Prompt: ${body.promptName}\n\n${promptText}`,
+      promptName: body.promptName,
+      promptResult: result,
+      promptText,
     });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : String(error) },
+      { success: false, error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   } finally {
