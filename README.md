@@ -1,13 +1,14 @@
 [Screencast from 06-14-2026 11:35:52 AM.webm](https://github.com/user-attachments/assets/c1f14a07-85b1-4a47-a76e-d1c05aa48691)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
-
-First, run the development server:
+▲ Next.js 16.2.10 (Turbopack)
+- Local: http://localhost:3000/mcpserver
 
 ```bash
-npm run dev
+npm run dev &
+npm install-scripts ls
+  & npm approve-scripts --all
+  & npm approve-scripts --allow-scripts-pending
 # or
 yarn dev
 # or

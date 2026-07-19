@@ -1,5 +1,5 @@
 {
-  "name": "my-turbo-app",
+  "name": "mcp-simple-nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,9 +12,9 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-            "@cfworker/json-schema": "^4.1.1",
-         "@modelcontextprotocol/client": "^2.0.0-alpha.2",
-         "@modelcontextprotocol/server": "^2.0.0-alpha.2"
+    "@cfworker/json-schema": "^4.1.1",
+    "@modelcontextprotocol/client": "^2.0.0-alpha.2",
+    "@modelcontextprotocol/server": "^2.0.0-alpha.2"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -31,5 +31,10 @@
     "ollama": "^0.6.3",
     "pdfjs-dist": "^5.5.207",
     "tsx": "^3.12.7"
+  },
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
   }
 }

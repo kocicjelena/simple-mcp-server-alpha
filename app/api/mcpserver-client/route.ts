@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { mcpClientNew } from "@/lib/mcp/mcpclientnew";
 
@@ -32,7 +33,7 @@ export async function GET(req: Request) {
     const listed = await client.listTools();
 
     return NextResponse.json({
-      tools: listed.tools.map((tool) => ({
+      tools: listed.tools.map((tool:any) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
